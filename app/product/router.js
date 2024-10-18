@@ -13,7 +13,7 @@ router.put('/products/:id', multer({ dest: os.tmpdir() }).single('image'),
 police_check('update', 'Product'),
  productController.update);
 router.delete('/products/:id',
-police_check('delete', 'Product'),
+    police_check('delete', 'Product'),
 productController.destroy);
 
 module.exports = router;

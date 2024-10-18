@@ -9,7 +9,9 @@ function decodeToken() {
        try {
         let token = getToken(req);
         
-        if(!token) return next();
+        if (!token) {
+            return next(); // Jika tidak ada token, lanjutkan ke middleware berikutnya
+        }
 
         req.user = jwt.verify(token, config.secretKey);
 

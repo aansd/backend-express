@@ -10,12 +10,12 @@ const store = async (req, res, next) => {
     try{
         let payload = req.body;
 
-        if(payload.category){
-            let category = await Category.findOne({name: {$regex: payload.category, $options: 'i'}});
-            if(category){
-                payload = {...payload, category: category._id};
-            }else{
-                delete payload.category;
+        if (payload.category) {
+            let category = await Category.findById(payload.category); 
+            if (category) {
+                payload = { ...payload, category: category._id };  
+            } else {
+                delete payload.category;  
             }
         }
 
@@ -43,9 +43,13 @@ const store = async (req, res, next) => {
 
                     let product = new Product({...payload, image_url:filename})
                     await product.save()
-                    return res.json(product);
+                    return res.json({
+                        success: true,
+                        message: "Product added successfully!",
+                        product: product
+                    });
                 } catch(err){
-                    // fs.unlinkSync(target_path);
+            
                     if(err && err.name === 'ValidationError'){
                         return res.json({
                             error: 1,
@@ -64,7 +68,11 @@ const store = async (req, res, next) => {
         }else{
             let product = new Product(payload);
             await product.save();
-            return res.json(product);
+            return res.json({
+                success: true,
+                message: "Product added successfully!",
+                product: product
+            });
         }
     } catch(err){
         if(err && err.name === 'ValidationError'){
@@ -163,7 +171,7 @@ const update = async (req, res, next) => {
 
 const index = async (req, res, next) => {
     try{
-        let {skip = 0, limit = 10, q = '', category = '', tags = []} = req.query;
+        let {skip = 0, limit = 50, q = '', category = '', tags = []} = req.query;
 
         let criteria = {};
         if(q.length){
@@ -211,7 +219,11 @@ const destroy = async (req, res, next) => {
         if(fs.existsSync(currentImage)) {
             fs.unlinkSync(currentImage);
         }
-        return res.json(product);
+        return res.json({
+            success: true,
+            message: "Product delete successfully!",
+            product: product
+        });
     }catch(err){
         next(err);
     }

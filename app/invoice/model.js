@@ -11,6 +11,7 @@ const invoiceSchema = Schema({
         required: [true, 'delivery_fee harus di isi'] 
     },
     delivery_address: {
+        nama: {type: String, required: [true, 'provinsi harus di isi']},
         provinsi: {type: String, required: [true, 'provinsi harus di isi']},
         kabupaten: {type: String, required: [true, 'kabupaten harus di isi']},
         kecamatan: {type: String, required: [true, 'kecamatan harus di isi']},

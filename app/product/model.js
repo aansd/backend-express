@@ -23,12 +23,13 @@ const productSchema = Schema({
 
     category: {
         type: Schema.Types.ObjectId,
-        ref: 'Category'
+        ref: 'Category',
+        
     },
-    tags: {
+    tags: [{
         type: Schema.Types.ObjectId,
         ref: 'Tag'
-    }
+    }]
 }, {timestamps: true});
 
 module.exports = model('Product', productSchema);

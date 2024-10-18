@@ -11,7 +11,12 @@ const register = async(req, res, next) => {
         const payload = req.body;
         let user = new User(payload);
         await user.save();
-        return res.json(user);
+        return res.json({
+            success: true,
+            message: "Register successfully!",
+            user: user,
+             "token": "jwt-token"
+        });
     }catch(err){
         if(err && err.name === 'ValidationError'){
             return res.json({
@@ -52,28 +57,43 @@ const login = async (req, res, next) => {
         await User.findByIdAndUpdate(user._id, {$push: {token: signed}});
 
         res.json({
+            success: true,
             message: 'Login Successfully',
             user,
             token: signed
         })
-    })(req, res, next)
+    })(req, res, next);
 }
 
 const logout = async (req, res, next) => {
-    let token = getToken(req);
-    let user = await User.findOneAndUpdate({token: {$in: [token]}}, {$pull: {token: token}}, {useFindAndModify: false});
-
-    if(!token || !user) {
-        res.json({
+    let token = getToken(req); 
+    if (!token) {
+        return res.json({
             error: 1,
-            message: 'No user Found!'
+            message: 'Token tidak ditemukan!'
         });
     }
+
+    
+    let user = await User.findOneAndUpdate(
+        { token: { $in: [token] } },
+        { $pull: { token: token } },
+        { useFindAndModify: false }
+    );
+
+    if (!user) {
+        return res.json({
+            error: 1,
+            message: 'Pengguna tidak ditemukan!'
+        });
+    }
+
     return res.json({
         error: 0,
-        message: 'logout berhasil'
+        message: 'Logout berhasil'
     });
-}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 
 const me = (req, res, next) => {
     if(!req.user) {

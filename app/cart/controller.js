@@ -4,7 +4,9 @@ const { json } = require('express');
 
 const update = async(req, res, next) => {
     try{
+        // console.log('Payload diterima:', JSON.stringify(req.body, null, 2));
         const {item} = req.body;
+
         const productIds = item.map(item => item.product._id);
         const products = await Product.find({_id: {$in: productIds}});
         let cartItems = item.map(item => {
@@ -46,13 +48,14 @@ const update = async(req, res, next) => {
 }
 
 
-const index = async(req, res, next) => {
+const index = async (req, res, next) => {
     try {
-        let items = await find({user: req.user._id}).populate('product');
+        let items = await cartItem.find({user: req.user._id}).populate('product');
         return res.json(items);
-    } catch (error) {
+    } catch (err) {
+        console.error("Error in fetching cart items:", err); // Log error detail
         if(err && err.name === 'ValidationError'){
-            return res.json({
+            return res.status(400).json({
                 error: 1,
                 message: err.message,
                 fields: err.errors
@@ -60,7 +63,7 @@ const index = async(req, res, next) => {
         }
         next(err);
     }
-}
+};
 
 module.exports = {
     update,
